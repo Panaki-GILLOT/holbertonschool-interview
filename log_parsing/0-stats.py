@@ -1,4 +1,11 @@
 #!/usr/bin/python3
+"""
+Log parsing module.
+
+Reads stdin line by line and computes metrics:
+- total file size
+- number of lines by status code
+"""
 import sys
 
 
