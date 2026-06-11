@@ -4,6 +4,13 @@ Log parsing module.
 """
 
 import sys
+import re
+
+LINE_PATTERN = re.compile(
+    r'^\d+\.\d+\.\d+\.\d+ - \[.+\] "GET /projects/260 HTTP/1\.1" (\d+) (\d+)$'
+)
+
+VALID_CODES = {"200", "301", "400", "401", "403", "404", "405", "500"}
 
 
 def print_stats(total_size, status_counts):
@@ -16,29 +23,16 @@ def print_stats(total_size, status_counts):
 
 def main():
     total_size = 0
-    status_counts = {
-        "200": 0,
-        "301": 0,
-        "400": 0,
-        "401": 0,
-        "403": 0,
-        "404": 0,
-        "405": 0,
-        "500": 0,
-    }
-
+    status_counts = {code: 0 for code in VALID_CODES}
     line_count = 0
 
     try:
         for line in sys.stdin:
-            parts = line.split()
-
-            # Validate format
-            try:
-                status = parts[-2]
-                size = int(parts[-1])
-            except Exception:
+            match = LINE_PATTERN.match(line.rstrip('\n'))
+            if not match:
                 continue
+
+            status, size = match.group(1), int(match.group(2))
 
             if status in status_counts:
                 status_counts[status] += 1
