@@ -25,9 +25,11 @@ def main():
     total_size = 0
     status_counts = {code: 0 for code in VALID_CODES}
     line_count = 0
+    any_input = False
 
     try:
         for line in sys.stdin:
+            any_input = True
             match = LINE_PATTERN.match(line.rstrip('\n'))
             if not match:
                 continue
@@ -47,7 +49,7 @@ def main():
         print_stats(total_size, status_counts)
         raise
 
-    if line_count == 0 or line_count % 10 != 0:
+    if not any_input or line_count % 10 != 0:
         print_stats(total_size, status_counts)
 
 
